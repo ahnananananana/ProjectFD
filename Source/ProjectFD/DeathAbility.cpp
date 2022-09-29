@@ -12,7 +12,7 @@ void UDeathAbility::OnGiveAbility(const FGameplayAbilityActorInfo* _pActorInfo, 
 
 	if (UHealthComponent* pHealthComp = Cast<UHealthComponent>(_pActorInfo->OwnerActor->GetComponentByClass(UHealthComponent::StaticClass())))
 	{
-		pHealthComp->OnAttributeChanged.AddUObject(this, &UDeathAbility::OnHealthChanged);
+		pHealthComp->OnHealthChanged.AddDynamic(this, &UDeathAbility::OnHealthChanged);
 	}
 	else
 	{
@@ -25,7 +25,6 @@ void UDeathAbility::ActivateAbility(const FGameplayAbilitySpecHandle _Handle, co
 	if (AGameBaseCharacter* pCharacter = Cast<AGameBaseCharacter>(_pActorInfo->OwnerActor))
 	{
 		pCharacter->PlayAnimMontage(pCharacter->GetCharacterData()->DeadMontages[0]);
-		
 	}
 }
 

@@ -2,7 +2,6 @@
 #include "HealthComponent.h"
 #include "HealthAttribute.h"
 #include "AbilitySystemComponent.h"
-#include "GameplayEffectTypes.h"
 
 UHealthComponent::UHealthComponent()
 {
@@ -21,17 +20,17 @@ void UHealthComponent::BindAttributeDelegates(UAbilitySystemComponent* _pAbility
 	_pAbilitySystempComp->GetGameplayAttributeValueChangeDelegate(UHealthAttribute::GetMaxHealthAttribute()).AddUObject(this, &ThisClass::HandleMaxHealthChanged);
 }
 
-void UHealthComponent::HandleHealthChanged(const FOnAttributeChangeData& ChangeData)
+void UHealthComponent::HandleHealthChanged(const FOnAttributeChangeData& _ChangeData)
 {
-	OnHealthChanged.Broadcast(this, ChangeData.OldValue, ChangeData.NewValue, GetInstigatorFromAttrChangeData(ChangeData));
+	OnHealthChanged.Broadcast(_ChangeData.NewValue, _ChangeData.OldValue);
 }
 
-void UHealthComponent::HandleHealthRegenChanged(const FOnAttributeChangeData& ChangeData)
+void UHealthComponent::HandleHealthRegenChanged(const FOnAttributeChangeData& _ChangeData)
 {
-	OnHealthRegenChanged.Broadcast(this, ChangeData.OldValue, ChangeData.NewValue, GetInstigatorFromAttrChangeData(ChangeData));
+	OnHealthRegenChanged.Broadcast(_ChangeData.NewValue, _ChangeData.OldValue);
 }
 
-void UHealthComponent::HandleMaxHealthChanged(const FOnAttributeChangeData& ChangeData)
+void UHealthComponent::HandleMaxHealthChanged(const FOnAttributeChangeData& _ChangeData)
 {
-	OnMaxHealthChanged.Broadcast(this, ChangeData.OldValue, ChangeData.NewValue, GetInstigatorFromAttrChangeData(ChangeData));
+	OnMaxHealthChanged.Broadcast(_ChangeData.NewValue, _ChangeData.OldValue);
 }

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "CustomDelegates.h"
+#include "GameplayEffectTypes.h"
 #include "AttributeComponent.generated.h"
 
 class UAbilitySystemComponent;
@@ -17,6 +18,10 @@ class PROJECTFD_API UAttributeComponent : public UActorComponent
 
 	UAttributeSetBase* m_pAttribute;
 	UAbilitySystemComponent* m_pAbilitySystemComp;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	UAttributeSetBase* GetAttribute() const { return m_pAttribute; }
 
 public:	
 	UAttributeComponent();

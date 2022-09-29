@@ -9,14 +9,17 @@
 class UAttributeSetBase;
 class UAbilitySystemComponent;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTFD_API UHealthComponent : public UAttributeComponent
 {
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
 	FVoidTwoFloat OnHealthChanged;
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
 	FVoidTwoFloat OnMaxHealthChanged;
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
 	FVoidTwoFloat OnHealthRegenChanged;
 
 public:	
@@ -27,7 +30,7 @@ protected:
 	void BindAttributeDelegates(UAbilitySystemComponent* _pAbilitySystempComp) override;
 
 private:
-	void HandleHealthChanged(const FOnAttributeChangeData& ChangeData);
-	void HandleHealthRegenChanged(const FOnAttributeChangeData& ChangeData);
-	void HandleMaxHealthChanged(const FOnAttributeChangeData& ChangeData);
+	void HandleHealthChanged(const FOnAttributeChangeData& _ChangeData);
+	void HandleHealthRegenChanged(const FOnAttributeChangeData& _ChangeData);
+	void HandleMaxHealthChanged(const FOnAttributeChangeData& _ChangeData);
 };

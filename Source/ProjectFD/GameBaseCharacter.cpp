@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "GameBaseCharacter.h"
 #include "Curves/CurveFloat.h"
@@ -18,7 +16,7 @@ AGameBaseCharacter::AGameBaseCharacter()
 	m_pAbilitySystemComp->SetIsReplicated(true);
 	m_pAbilitySystemComp->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
-	m_pHealthComp = CreateDefaultSubobject<UHealthComponent>(TEXT("Health Component"));
+	CreateDefaultSubobject<UHealthComponent>(TEXT("Health Component"));
 }
 
 // Called when the game starts or when spawned

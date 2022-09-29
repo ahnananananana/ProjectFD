@@ -3,5 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UObject/NoExportTypes.h"
+#include "CustomDelegates.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FVoidTwoFloat, float, float);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FVoidTwoFloat, float, NewValue, float, OldValue);
+
+UCLASS()
+class PROJECTFD_API UCustomDelegates : public UObject
+{
+	GENERATED_BODY()
+};
