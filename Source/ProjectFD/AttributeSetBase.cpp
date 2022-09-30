@@ -5,7 +5,6 @@
 
 UAttributeSetBase::UAttributeSetBase()
 {
-
 }
 
 void UAttributeSetBase::Init(const FDataTableRowHandle& _DataHandle)

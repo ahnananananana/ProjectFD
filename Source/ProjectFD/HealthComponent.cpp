@@ -22,6 +22,7 @@ void UHealthComponent::BindAttributeDelegates(UAbilitySystemComponent* _pAbility
 
 void UHealthComponent::HandleHealthChanged(const FOnAttributeChangeData& _ChangeData)
 {
+	UE_LOG(LogTemp, Log, TEXT("%f %f"), _ChangeData.NewValue, _ChangeData.OldValue);
 	OnHealthChanged.Broadcast(_ChangeData.NewValue, _ChangeData.OldValue);
 }
 

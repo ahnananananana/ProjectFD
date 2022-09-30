@@ -15,4 +15,5 @@ public:
 	UAbilitySystemComponentBase();
 
 	void InitAttribute(const FDataTableRowHandle& _DataHandle);
+	void NotifyToAbilities(USkeletalMeshComponent* _pMeshComp, UAnimSequenceBase* _pAnimation, const FAnimNotifyEventReference& _EventReference);
 };

@@ -8,7 +8,9 @@
 UENUM(BlueprintType)
 enum class EInput : uint8
 {
-	LMB_PRESSED UMETA(DisplayName = "LMB Pressed"),
+	NONE UMETA(DisplayName = "None"),
+	PRIMARY_ACTION UMETA(DisplayName = "Primary Action"),
+	SECONDARY_ACTION UMETA(DisplayName = "Secondary Action"),
 };
 
 

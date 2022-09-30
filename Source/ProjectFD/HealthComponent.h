@@ -9,7 +9,7 @@
 class UAttributeSetBase;
 class UAbilitySystemComponent;
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTFD_API UHealthComponent : public UAttributeComponent
 {
 	GENERATED_BODY()

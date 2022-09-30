@@ -19,6 +19,11 @@ AGameBaseCharacter::AGameBaseCharacter()
 	CreateDefaultSubobject<UHealthComponent>(TEXT("Health Component"));
 }
 
+void AGameBaseCharacter::BindInputAbility(const EInput& _eInput, const FGameplayAbilitySpecHandle& _Handle)
+{
+	m_mapInputAbility.Emplace(_eInput, _Handle);
+}
+
 // Called when the game starts or when spawned
 void AGameBaseCharacter::BeginPlay()
 {
@@ -30,10 +35,17 @@ void AGameBaseCharacter::BeginPlay()
 	{
 		//TODO: Attribute 쪽에서 초기화하는 방법은 없나? 여기서 하는게 가독성이 더 좋은가?
 		m_pAbilitySystemComp->InitAttribute(m_BaseData);
-
-		for (const auto& pair : m_mapAbility)
+		
+		for (const FAbilityInitInfo& info : m_arrInitialAbilities)
 		{
-			m_pAbilitySystemComp->GiveAbility(FGameplayAbilitySpec(pair.Value, 1, -1, this));
+			FGameplayAbilitySpec spec = info.AbilityInfo.CreateInstance(this);
+
+			FGameplayAbilitySpecHandle handle = m_pAbilitySystemComp->GiveAbility(spec);
+
+			if (info.Input != EInput::NONE)
+			{
+				BindInputAbility(info.Input, handle);
+			}
 		}
 	}
 }
@@ -63,9 +75,11 @@ void AGameBaseCharacter::Tick(float _fDeltaTime)
 	{
 		if (pc->WasInputKeyJustPressed(EKeys::LeftMouseButton))
 		{
-			m_pAbilitySystemComp->TryActivateAbilityByClass(m_mapAbility[EInput::LMB_PRESSED]);
-			//m_pAbilitySystemComponent
-			//m_mapAbility[EInput::LMB_PRESSED]->GetDefaultObject<UGameplayAbility>().
+			m_pAbilitySystemComp->TryActivateAbility(m_mapInputAbility[EInput::PRIMARY_ACTION]);
+		}
+		else if (pc->WasInputKeyJustPressed(EKeys::RightMouseButton))
+		{
+			m_pAbilitySystemComp->TryActivateAbility(m_mapInputAbility[EInput::SECONDARY_ACTION]);
 		}
 	}
 

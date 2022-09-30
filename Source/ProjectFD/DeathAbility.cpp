@@ -5,6 +5,12 @@
 #include "HealthComponent.h"
 #include "AbilitySystemComponent.h"
 #include "GameBaseCharacter.h"
+#include "Components/WidgetComponent.h"
+
+void UDeathAbility::Init(const FAbilityInfo& _Info)
+{
+	m_arrDeadMontage = _Info.Montages;
+}
 
 void UDeathAbility::OnGiveAbility(const FGameplayAbilityActorInfo* _pActorInfo, const FGameplayAbilitySpec& _Spec)
 {
@@ -16,15 +22,20 @@ void UDeathAbility::OnGiveAbility(const FGameplayAbilityActorInfo* _pActorInfo, 
 	}
 	else
 	{
-		UE_LOG(LogScript, Warning, TEXT("No UHealthComponent!"));
+		UE_LOG(LogTemp, Warning, TEXT("No UHealthComponent!"));
 	}
 }
 
 void UDeathAbility::ActivateAbility(const FGameplayAbilitySpecHandle _Handle, const FGameplayAbilityActorInfo* _pActorInfo, const FGameplayAbilityActivationInfo _ActivationInfo, const FGameplayEventData* _pTriggerEventData)
 {
+	Super::ActivateAbility(_Handle, _pActorInfo, _ActivationInfo, _pTriggerEventData);
+
 	if (AGameBaseCharacter* pCharacter = Cast<AGameBaseCharacter>(_pActorInfo->OwnerActor))
 	{
-		pCharacter->PlayAnimMontage(pCharacter->GetCharacterData()->DeadMontages[0]);
+		pCharacter->PlayAnimMontage(m_arrDeadMontage[0]);
+		pCharacter->SetActorEnableCollision(false);
+		pCharacter->AddGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("Dead")));
+		pCharacter->FindComponentByClass<UWidgetComponent>()->SetVisibility(false);
 	}
 }
 
@@ -32,6 +43,6 @@ void UDeathAbility::OnHealthChanged(float _fNewValue, float _fOldValue)
 {
 	if (_fNewValue <= 0.f)
 	{
-		GetAbilitySystemComponentFromActorInfo()->TryActivateAbilityByClass(ThisClass::StaticClass());
+		GetAbilitySystemComponentFromActorInfo()->TryActivateAbility(m_Handle);
 	}
 }
