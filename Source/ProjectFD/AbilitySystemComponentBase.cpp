@@ -24,13 +24,16 @@ void UAbilitySystemComponentBase::InitAttribute(const FDataTableRowHandle& _Data
 	}
 }
 
-void UAbilitySystemComponentBase::NotifyToAbilities(USkeletalMeshComponent* _pMeshComp, UAnimSequenceBase* _pAnimation, const FAnimNotifyEventReference& _EventReference)
+void UAbilitySystemComponentBase::NotifyToAbilities(const FString& _strEventName, USkeletalMeshComponent* _pMeshComp, UAnimSequenceBase* _pAnimation, const FAnimNotifyEventReference& _EventReference)
 {
 	for (const FGameplayAbilitySpec& spec : ActivatableAbilities.Items)
 	{
-		if (UGameplayAbilityBase* pAbility = Cast<UGameplayAbilityBase>(spec.Ability))
+		for (UGameplayAbility* pAbility : spec.GetAbilityInstances())
 		{
-			pAbility->OnNotify(_pMeshComp, _pAnimation, _EventReference);
+			if (UGameplayAbilityBase* pAbilityBase = Cast<UGameplayAbilityBase>(pAbility))
+			{
+				pAbilityBase->OnNotify(_strEventName, _pMeshComp, _pAnimation, _EventReference);
+			}
 		}
 	}
 }

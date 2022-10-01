@@ -14,17 +14,28 @@ class PROJECTFD_API UMurdockBuckShot : public UGameplayAbilityBase
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, DisplayName = "Shoot Montage", meta = (AllowPrivateAccess))
 	UAnimMontage* m_pMontage;
-	UParticleSystem* m_pShotParticle, *m_pHitParticle;
+	UPROPERTY(EditAnywhere, DisplayName = "Shot Particle", meta = (AllowPrivateAccess))
+	UParticleSystem* m_pShotParticle;
+	UPROPERTY(EditAnywhere, DisplayName = "Hit Particle", meta = (AllowPrivateAccess))
+	UParticleSystem* m_pHitParticle;
 	//TODO: 외부에서 받아와야? 소켓 이름의 변경 대비?
+	UPROPERTY(EditAnywhere, DisplayName = "Muzzel Socket Name", meta = (AllowPrivateAccess))
 	FName m_strMuzzleName = TEXT("Muzzle_03");
+	UPROPERTY(EditAnywhere, DisplayName = "Damage Effect", meta = (AllowPrivateAccess))
+	TSubclassOf<UGameplayEffect> m_pDamageEffect;
+	UPROPERTY(EditAnywhere, DisplayName = "Shot Overlap Shape", meta = (AllowPrivateAccess))
+	TSubclassOf<AActor> m_pShotOverlapShape;
 
 public:
-	void Init(const FAbilityInfo& _Info) override;
-
-	bool CanActivateAbility(const FGameplayAbilitySpecHandle _Handle, const FGameplayAbilityActorInfo* _pActorInfo, const FGameplayTagContainer* _pSourceTags = nullptr, const FGameplayTagContainer* _pTargetTags = nullptr, OUT FGameplayTagContainer* _pOptionalRelevantTags = nullptr) const override;
+	void OnGiveAbility(const FGameplayAbilityActorInfo* _pActorInfo, const FGameplayAbilitySpec& _Spec) override;
 
 protected:
 	void ActivateAbility(const FGameplayAbilitySpecHandle _Handle, const FGameplayAbilityActorInfo* _pActorInfo, const FGameplayAbilityActivationInfo _ActivationInfo, const FGameplayEventData* _pTriggerEventData) override;
-	void OnNotify(USkeletalMeshComponent* _pMeshComp, UAnimSequenceBase* _pAnimation, const FAnimNotifyEventReference& _EventReference) override;
+	void OnNotify(const FString& _strEventName, USkeletalMeshComponent* _pMeshComp, UAnimSequenceBase* _pAnimation, const FAnimNotifyEventReference& _EventReference) override;
+
+private:
+	UFUNCTION()
+	void OnMontageEnded(UAnimMontage* _pMontage, bool _bInterrupted);
 };

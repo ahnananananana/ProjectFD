@@ -1,22 +1,18 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "MurdockBuckShot.h"
 #include "GameFramework/Character.h"
 #include "Particles/ParticleSystem.h"
 #include "Kismet/GameplayStatics.h"
+#include "AbilitySystemComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "AbilitySystemInterface.h"
+#include "GameplayTagAssetInterface.h"
+#include "GameBaseCharacter.h"
 
-void UMurdockBuckShot::Init(const FAbilityInfo& _Info)
+void UMurdockBuckShot::OnGiveAbility(const FGameplayAbilityActorInfo* _pActorInfo, const FGameplayAbilitySpec& _Spec)
 {
-	m_pMontage = _Info.Montages[0];
-	m_pShotParticle = _Info.Particles[0];
-	m_pHitParticle = _Info.Particles[1];
-}
-
-bool UMurdockBuckShot::CanActivateAbility(const FGameplayAbilitySpecHandle _Handle, const FGameplayAbilityActorInfo* _pActorInfo, const FGameplayTagContainer* _pSourceTags, const FGameplayTagContainer* _pTargetTags, OUT FGameplayTagContainer* _pOptionalRelevantTags) const
-{
-	ACharacter* pCharacter = Cast<ACharacter>(GetOwningActorFromActorInfo());
-	return pCharacter->GetCurrentMontage() != m_pMontage;
+	Super::OnGiveAbility(_pActorInfo, _Spec);
+	_pActorInfo->SkeletalMeshComponent->GetAnimInstance()->OnMontageEnded.AddDynamic(this, &UMurdockBuckShot::OnMontageEnded);
 }
 
 void UMurdockBuckShot::ActivateAbility(const FGameplayAbilitySpecHandle _Handle, const FGameplayAbilityActorInfo* _pActorInfo, const FGameplayAbilityActivationInfo _ActivationInfo, const FGameplayEventData* _pTriggerEventData)
@@ -29,8 +25,48 @@ void UMurdockBuckShot::ActivateAbility(const FGameplayAbilitySpecHandle _Handle,
 	}
 }
 
-void UMurdockBuckShot::OnNotify(USkeletalMeshComponent* _pMeshComp, UAnimSequenceBase* _pAnimation, const FAnimNotifyEventReference& _EventReference)
+void UMurdockBuckShot::OnMontageEnded(UAnimMontage* _pMontage, bool _bInterrupted)
 {
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), m_pShotParticle, _pMeshComp->GetSocketTransform(m_strMuzzleName));
+	if (_pMontage == m_pMontage)
+	{
+		EndAbility(m_Handle, CurrentActorInfo, CurrentActivationInfo, false, false);
+	}
+}
 
+void UMurdockBuckShot::OnNotify(const FString& _strEventName, USkeletalMeshComponent* _pMeshComp, UAnimSequenceBase* _pAnimation, const FAnimNotifyEventReference& _EventReference)
+{
+	FVector vLoc = _pMeshComp->GetSocketLocation(m_strMuzzleName);
+	FVector vDir = (Cast<AGameBaseCharacter>(GetOwningActorFromActorInfo())->GetAimPoint() - vLoc);
+
+	FTransform trans(vDir.ToOrientationRotator(), vLoc);
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), m_pShotParticle, trans);
+	//TODO: 스폰을 안하고 안에 Primitive Component 정보만 빼올 수 없나
+	AActor* pShapeActor = GetWorld()->SpawnActor<AActor>(m_pShotOverlapShape, trans);
+	UPrimitiveComponent* pShape = pShapeActor->FindComponentByClass<UPrimitiveComponent>();
+
+	TArray<TEnumAsByte<EObjectTypeQuery>> traceObjectTypes;
+	traceObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
+	TArray<AActor*> ignore{GetOwningActorFromActorInfo()};
+	TArray<AActor*> result;
+	if (UKismetSystemLibrary::ComponentOverlapActors(pShape, pShape->GetComponentTransform(), traceObjectTypes, nullptr, ignore, result))
+	{
+		for (AActor* pTarget : result)
+		{
+			if (IGameplayTagAssetInterface* pTagInter = Cast<IGameplayTagAssetInterface>(pTarget))
+			{
+				//pTagInter->Has
+				if (IAbilitySystemInterface* pASInter = Cast<IAbilitySystemInterface>(pTarget))
+				{
+					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), m_pHitParticle, pTarget->GetActorTransform());
+
+					FGameplayEffectContextHandle context;
+					FGameplayEffectSpec spec(m_pDamageEffect.GetDefaultObject(), context);
+						
+					pASInter->GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(spec);
+				}
+			}
+		}
+	}
+
+	GetWorld()->DestroyActor(pShapeActor);
 }

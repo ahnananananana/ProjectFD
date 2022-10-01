@@ -42,7 +42,7 @@ private:
 	virtual void Init(const FAbilityInfo& _info) {}
 
 protected:
-	virtual void OnNotify(USkeletalMeshComponent* _pMeshComp, UAnimSequenceBase* _pAnimation, const FAnimNotifyEventReference& _EventReference) {}
+	virtual void OnNotify(const FString& _strEventName, USkeletalMeshComponent* _pMeshComp, UAnimSequenceBase* _pAnimation, const FAnimNotifyEventReference& _EventReference) {}
 
 	friend struct FAbilityInfo;
 	friend class UAbilitySystemComponentBase;

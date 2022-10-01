@@ -7,11 +7,6 @@
 #include "GameBaseCharacter.h"
 #include "Components/WidgetComponent.h"
 
-void UDeathAbility::Init(const FAbilityInfo& _Info)
-{
-	m_arrDeadMontage = _Info.Montages;
-}
-
 void UDeathAbility::OnGiveAbility(const FGameplayAbilityActorInfo* _pActorInfo, const FGameplayAbilitySpec& _Spec)
 {
 	Super::OnGiveAbility(_pActorInfo, _Spec);
@@ -44,5 +39,6 @@ void UDeathAbility::OnHealthChanged(float _fNewValue, float _fOldValue)
 	if (_fNewValue <= 0.f)
 	{
 		GetAbilitySystemComponentFromActorInfo()->TryActivateAbility(m_Handle);
+		EndAbility(m_Handle, CurrentActorInfo, CurrentActivationInfo, false, false);
 	}
 }

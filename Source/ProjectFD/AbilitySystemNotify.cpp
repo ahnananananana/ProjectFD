@@ -13,7 +13,7 @@ void UAbilitySystemNotify::Notify(USkeletalMeshComponent* _pMeshComp, UAnimSeque
 	{
 		if (UAbilitySystemComponentBase* pAbilitySystem = Cast<UAbilitySystemComponentBase>(pInterface->GetAbilitySystemComponent()))
 		{
-			pAbilitySystem->NotifyToAbilities(_pMeshComp, _pAnimation, _EventReference);
+			pAbilitySystem->NotifyToAbilities(m_strEventName, _pMeshComp, _pAnimation, _EventReference);
 		}
 	}
 }

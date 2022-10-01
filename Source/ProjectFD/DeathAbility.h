@@ -13,10 +13,10 @@ class PROJECTFD_API UDeathAbility : public UGameplayAbilityBase
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, DisplayName = "Montages", meta = (AllowPrivateAccess))
 	TArray<UAnimMontage*> m_arrDeadMontage;
 	
 public:
-	void Init(const FAbilityInfo& _Info) override;
 	void OnGiveAbility(const FGameplayAbilityActorInfo* _pActorInfo, const FGameplayAbilitySpec& _Spec) override;
 
 protected:

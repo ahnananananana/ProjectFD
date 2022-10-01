@@ -25,8 +25,10 @@ struct FAbilityInitInfo
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, DisplayName = "Input")
 	EInput Input;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, DisplayName = "Ability Info")
-	FAbilityInfo AbilityInfo;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, DisplayName = "Ability")
+	TSubclassOf<UGameplayAbilityBase> Ability;
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, DisplayName = "Ability Info")
+	FAbilityInfo AbilityInfo;*/
 };
 
 UCLASS(BlueprintType)
@@ -58,13 +60,16 @@ class PROJECTFD_API AGameBaseCharacter
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameplayAbility", DisplayName = "Base Data", meta = (AllowPrivateAccess = "true"))
 	FDataTableRowHandle m_BaseData;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameplayAbility", DisplayName = "Default Ability", meta = (AllowPrivateAccess = "true"))
-	TArray<FAbilityInitInfo> m_arrInitialAbilities;
+	TArray<FAbilityInitInfo> m_arrDefaultAbilities;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GameplayAbility", DisplayName = "Input Ability", meta = (AllowPrivateAccess = "true"))
-	TMap<EInput, FGameplayAbilitySpecHandle> m_mapInputAbility;
+	TMap<EInput, TSubclassOf<UGameplayAbilityBase>> m_mapInputAbility;
 
 	FCharacterData* m_pCharacterData;
 
 public:
+	UFUNCTION(BlueprintCallable)
+	FVector GetAimPoint() const;
+
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	UFUNCTION(BlueprintCallable, Category = GameplayTags)
@@ -82,7 +87,7 @@ public:
 public:
 	AGameBaseCharacter();
 
-	void BindInputAbility(const EInput& _eInput, const FGameplayAbilitySpecHandle& _Handle);
+	void BindInputAbility(const EInput& _eInput, const TSubclassOf<UGameplayAbilityBase>& _Ability);
 
 protected:
 	void BeginPlay() override;

@@ -14,5 +14,8 @@ class PROJECTFD_API UAbilitySystemNotify : public UAnimNotify
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, DisplayName = "Event Name", meta = (AllowPrivateAccess))
+	FString m_strEventName;
+
 	void Notify(USkeletalMeshComponent* _pMeshComp, UAnimSequenceBase* _pAnimation, const FAnimNotifyEventReference& EventReference) override;
 };
