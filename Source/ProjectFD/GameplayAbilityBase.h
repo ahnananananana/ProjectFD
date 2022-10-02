@@ -31,13 +31,8 @@ class PROJECTFD_API UGameplayAbilityBase : public UGameplayAbility
 {
 	GENERATED_BODY()
 
-protected:
-	FGameplayAbilitySpecHandle m_Handle;
-
 public:
 	UGameplayAbilityBase();
-	void OnGiveAbility(const FGameplayAbilityActorInfo* _pActorInfo, const FGameplayAbilitySpec& _Spec) override;
-
 private:
 	virtual void Init(const FAbilityInfo& _info) {}
 

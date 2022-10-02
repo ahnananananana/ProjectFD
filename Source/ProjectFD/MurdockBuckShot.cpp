@@ -22,6 +22,7 @@ void UMurdockBuckShot::ActivateAbility(const FGameplayAbilitySpecHandle _Handle,
 	if (ACharacter* pCharacter = Cast<ACharacter>(_pActorInfo->OwnerActor))
 	{
 		pCharacter->PlayAnimMontage(m_pMontage);
+		CommitAbilityCooldown(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false);
 	}
 }
 
@@ -29,7 +30,7 @@ void UMurdockBuckShot::OnMontageEnded(UAnimMontage* _pMontage, bool _bInterrupte
 {
 	if (_pMontage == m_pMontage)
 	{
-		EndAbility(m_Handle, CurrentActorInfo, CurrentActivationInfo, false, false);
+		EndAbility(GetCurrentAbilitySpecHandle(), CurrentActorInfo, CurrentActivationInfo, false, false);
 	}
 }
 
@@ -60,9 +61,7 @@ void UMurdockBuckShot::OnNotify(const FString& _strEventName, USkeletalMeshCompo
 					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), m_pHitParticle, pTarget->GetActorTransform());
 
 					FGameplayEffectContextHandle context;
-					FGameplayEffectSpec spec(m_pDamageEffect.GetDefaultObject(), context);
-						
-					pASInter->GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(spec);
+					pASInter->GetAbilitySystemComponent()->ApplyGameplayEffectToSelf(m_pDamageEffect.GetDefaultObject(), 1, context);
 				}
 			}
 		}

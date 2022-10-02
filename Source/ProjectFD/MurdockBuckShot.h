@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayAbilityBase.h"
+#include "PlayerCharacterAbility.h"
 #include "MurdockBuckShot.generated.h"
 
 class UAnimMontage;
 class UParticleSystem;
 
 UCLASS()
-class PROJECTFD_API UMurdockBuckShot : public UGameplayAbilityBase
+class PROJECTFD_API UMurdockBuckShot : public UPlayerCharacterAbility
 {
 	GENERATED_BODY()
 

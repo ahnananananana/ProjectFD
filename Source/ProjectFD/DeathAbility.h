@@ -23,6 +23,5 @@ protected:
 	void ActivateAbility(const FGameplayAbilitySpecHandle _Handle, const FGameplayAbilityActorInfo* _pActorInfo, const FGameplayAbilityActivationInfo _ActivationInfo, const FGameplayEventData* _pTriggerEventData) override;
 
 private:
-	UFUNCTION(meta = (AllowPrivateAccess = "true"))
-	void OnHealthChanged(float _fNewValue, float _fOldValue);
+	void OnHealthChanged(const FOnAttributeChangeData& _ChangeData);
 };

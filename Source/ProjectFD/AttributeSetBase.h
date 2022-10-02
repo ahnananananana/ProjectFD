@@ -11,7 +11,8 @@
 #include "Net/UnrealNetwork.h"
 #include "AttributeSetBase.generated.h"
 
-UCLASS(Abstract)
+
+UCLASS(Abstract, BlueprintType)
 class PROJECTFD_API UAttributeSetBase : public UAttributeSet
 {
 	GENERATED_BODY()

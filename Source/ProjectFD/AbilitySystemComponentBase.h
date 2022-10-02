@@ -6,11 +6,11 @@
 #include "Engine/DataTable.h"
 #include "AbilitySystemComponentBase.generated.h"
 
-UCLASS()
+UCLASS(BlueprintType)
 class PROJECTFD_API UAbilitySystemComponentBase : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
-	
+
 public:
 	UAbilitySystemComponentBase();
 

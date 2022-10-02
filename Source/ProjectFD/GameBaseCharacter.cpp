@@ -4,6 +4,7 @@
 #include "HelperMacro.h"
 #include "AbilitySystemComponentBase.h"
 #include "HealthComponent.h"
+#include "PlayerCharacterAbility.h"
 #include "GameCharacterAttributeSet.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -18,12 +19,12 @@ AGameBaseCharacter::AGameBaseCharacter()
 	m_pAbilitySystemComp->SetIsReplicated(true);
 	m_pAbilitySystemComp->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
-	CreateDefaultSubobject<UHealthComponent>(TEXT("Health Component"));
+	m_pAttributeSet = CreateDefaultSubobject<UGameCharacterAttributeSet>("AttributeSet");
 }
 
-void AGameBaseCharacter::BindInputAbility(const EInput& _eInput, const TSubclassOf<UGameplayAbilityBase>& _Ability)
+void AGameBaseCharacter::BindInputAbility(const EInput& _eInput, const FGameplayAbilitySpecHandle& _Handle)
 {
-	m_mapInputAbility.Emplace(_eInput, _Ability);
+	m_mapInputAbility.Emplace(_eInput, _Handle);
 }
 
 // Called when the game starts or when spawned
@@ -36,15 +37,16 @@ void AGameBaseCharacter::BeginPlay()
 	// Init Gameplay Ability System
 	{
 		//TODO: Attribute 쪽에서 초기화하는 방법은 없나? 여기서 하는게 가독성이 더 좋은가?
-		m_pAbilitySystemComp->InitAttribute(m_BaseData);
+		//m_pAbilitySystemComp->InitAttribute(m_BaseData);
+		m_pAttributeSet->Init(m_BaseData);
 		
 		for (const FAbilityInitInfo& info : m_arrDefaultAbilities)
 		{
-			m_pAbilitySystemComp->GiveAbility(FGameplayAbilitySpec(info.Ability));
+			FGameplayAbilitySpecHandle handle = m_pAbilitySystemComp->GiveAbility(FGameplayAbilitySpec(info.Ability));
 			
 			if (info.Input != EInput::NONE)
 			{
-				BindInputAbility(info.Input, info.Ability);
+				BindInputAbility(info.Input, handle);
 			}
 		}
 	}
@@ -98,29 +100,35 @@ void AGameBaseCharacter::Tick(float _fDeltaTime)
 
 	if (APlayerController* pc = Cast<APlayerController>(GetController()))
 	{
-		if (pc->WasInputKeyJustPressed(EKeys::LeftMouseButton))
+		if (m_mapInputAbility.Contains(EInput::PRIMARY_ACTION) && pc->WasInputKeyJustPressed(EKeys::LeftMouseButton))
 		{
-			m_pAbilitySystemComp->TryActivateAbilityByClass(m_mapInputAbility[EInput::PRIMARY_ACTION]);
+			m_pAbilitySystemComp->TryActivateAbility(m_mapInputAbility[EInput::PRIMARY_ACTION]);
 		}
-		else if (pc->WasInputKeyJustPressed(EKeys::RightMouseButton))
+		else if (m_mapInputAbility.Contains(EInput::SECONDARY_ACTION) && pc->WasInputKeyJustPressed(EKeys::RightMouseButton))
 		{
-			m_pAbilitySystemComp->TryActivateAbilityByClass(m_mapInputAbility[EInput::SECONDARY_ACTION]);
+			m_pAbilitySystemComp->TryActivateAbility(m_mapInputAbility[EInput::SECONDARY_ACTION]);
 		}
-		else if (pc->WasInputKeyJustReleased(EKeys::RightMouseButton))
+		else if (m_mapInputAbility.Contains(EInput::SECONDARY_ACTION) && pc->WasInputKeyJustReleased(EKeys::RightMouseButton))
 		{
-			m_pAbilitySystemComp->CancelAbility(m_mapInputAbility[EInput::SECONDARY_ACTION].GetDefaultObject());
+			m_pAbilitySystemComp->CancelAbilityHandle(m_mapInputAbility[EInput::SECONDARY_ACTION]);
 		}
-		else if (pc->WasInputKeyJustPressed(EKeys::Q))
+		else if (m_mapInputAbility.Contains(EInput::SKILL1) && pc->WasInputKeyJustPressed(EKeys::Q))
 		{
-			m_pAbilitySystemComp->TryActivateAbilityByClass(m_mapInputAbility[EInput::SKILL1]);
+			m_pAbilitySystemComp->TryActivateAbility(m_mapInputAbility[EInput::SKILL1]);
 		}
-		else if (pc->WasInputKeyJustPressed(EKeys::E))
+		else if (m_mapInputAbility.Contains(EInput::SKILL2) && pc->WasInputKeyJustPressed(EKeys::E))
 		{
-			m_pAbilitySystemComp->TryActivateAbilityByClass(m_mapInputAbility[EInput::SKILL2]);
+			m_pAbilitySystemComp->TryActivateAbility(m_mapInputAbility[EInput::SKILL2]);
 		}
-		else if (pc->WasInputKeyJustPressed(EKeys::R))
+		else if (m_mapInputAbility.Contains(EInput::ULTIMATE) && pc->WasInputKeyJustPressed(EKeys::R))
 		{
-			m_pAbilitySystemComp->TryActivateAbilityByClass(m_mapInputAbility[EInput::ULTIMATE]);
+			m_pAbilitySystemComp->TryActivateAbility(m_mapInputAbility[EInput::ULTIMATE]);
+		}
+		
+		if (m_testEffect.Get() && pc->WasInputKeyJustPressed(EKeys::T))
+		{
+			FGameplayEffectContextHandle h;
+			m_pAbilitySystemComp->ApplyGameplayEffectToSelf(m_testEffect.GetDefaultObject(), 1, h);
 		}
 	}	 
 		

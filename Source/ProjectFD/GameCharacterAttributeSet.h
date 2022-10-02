@@ -7,6 +7,9 @@
 #include "CustomMacros.h"
 #include "GameCharacterAttributeSet.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAttributeChanged, const FGameplayAttribute&, _Attribute, float, NewValue);
+
+
 UCLASS()
 class PROJECTFD_API UGameCharacterAttributeSet : public UAttributeSet
 {
@@ -24,6 +27,10 @@ class PROJECTFD_API UGameCharacterAttributeSet : public UAttributeSet
 	FGameplayAttributeData AttackDamage;
 
 public:
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FOnAttributeChanged OnAttributeValueChanged;
+
+public:
 	ATTRIBUTE_ACCESSORS(UGameCharacterAttributeSet, Health)
 	ATTRIBUTE_ACCESSORS(UGameCharacterAttributeSet, MaxHealth)
 	ATTRIBUTE_ACCESSORS(UGameCharacterAttributeSet, Mana)
@@ -36,7 +43,6 @@ public:
 	void Init(FDataTableRowHandle& _handle);
 
 	void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
-	void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

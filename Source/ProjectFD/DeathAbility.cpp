@@ -6,19 +6,13 @@
 #include "AbilitySystemComponent.h"
 #include "GameBaseCharacter.h"
 #include "Components/WidgetComponent.h"
+#include "GameCharacterAttributeSet.h"
 
 void UDeathAbility::OnGiveAbility(const FGameplayAbilityActorInfo* _pActorInfo, const FGameplayAbilitySpec& _Spec)
 {
 	Super::OnGiveAbility(_pActorInfo, _Spec);
 
-	if (UHealthComponent* pHealthComp = Cast<UHealthComponent>(_pActorInfo->OwnerActor->GetComponentByClass(UHealthComponent::StaticClass())))
-	{
-		pHealthComp->OnHealthChanged.AddDynamic(this, &UDeathAbility::OnHealthChanged);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No UHealthComponent!"));
-	}
+	_pActorInfo->AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGameCharacterAttributeSet::GetHealthAttribute()).AddUObject(this, &UDeathAbility::OnHealthChanged);
 }
 
 void UDeathAbility::ActivateAbility(const FGameplayAbilitySpecHandle _Handle, const FGameplayAbilityActorInfo* _pActorInfo, const FGameplayAbilityActivationInfo _ActivationInfo, const FGameplayEventData* _pTriggerEventData)
@@ -34,11 +28,11 @@ void UDeathAbility::ActivateAbility(const FGameplayAbilitySpecHandle _Handle, co
 	}
 }
 
-void UDeathAbility::OnHealthChanged(float _fNewValue, float _fOldValue)
+void UDeathAbility::OnHealthChanged(const FOnAttributeChangeData& _ChangeData)
 {
-	if (_fNewValue <= 0.f)
+	if (_ChangeData.OldValue > 0.f && _ChangeData.NewValue <= 0.f)
 	{
-		GetAbilitySystemComponentFromActorInfo()->TryActivateAbility(m_Handle);
-		EndAbility(m_Handle, CurrentActorInfo, CurrentActivationInfo, false, false);
+		GetAbilitySystemComponentFromActorInfo()->TryActivateAbility(GetCurrentAbilitySpecHandle());
+		EndAbility(GetCurrentAbilitySpecHandle(), CurrentActorInfo, CurrentActivationInfo, false, false);
 	}
 }

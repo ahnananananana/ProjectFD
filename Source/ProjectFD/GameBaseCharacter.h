@@ -17,6 +17,7 @@ class UAbilitySystemComponentBase;
 class UGameCharacterAttributeSet;
 class UHealthComponent;
 class UAnimMontage;
+class UPlayerCharacterAbility;
 
 USTRUCT(BlueprintType)
 struct FAbilityInitInfo
@@ -41,8 +42,11 @@ class PROJECTFD_API AGameBaseCharacter
 	UPROPERTY(EditAnyWhere, DisplayName = "Owned Tags")
 	FGameplayTagContainer m_OwnedTags;
 
-	UPROPERTY(EditAnyWhere, DisplayName = "Health Component")
-	UHealthComponent* m_pHealthComp;
+	UPROPERTY(EditAnyWhere, DisplayName = "UGameplayEffect")
+	TSubclassOf<UGameplayEffect> m_testEffect;
+
+	UPROPERTY(EditAnyWhere, DisplayName = "UGameplayEffect")
+	UGameCharacterAttributeSet* m_pAttributeSet;
 
 	/*UPROPERTY(EditAnyWhere, DisplayName = "Turn Speed")
 	double m_dTurnSpeed;
@@ -62,7 +66,7 @@ class PROJECTFD_API AGameBaseCharacter
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameplayAbility", DisplayName = "Default Ability", meta = (AllowPrivateAccess = "true"))
 	TArray<FAbilityInitInfo> m_arrDefaultAbilities;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GameplayAbility", DisplayName = "Input Ability", meta = (AllowPrivateAccess = "true"))
-	TMap<EInput, TSubclassOf<UGameplayAbilityBase>> m_mapInputAbility;
+	TMap<EInput, FGameplayAbilitySpecHandle> m_mapInputAbility;
 
 	FCharacterData* m_pCharacterData;
 
@@ -87,7 +91,7 @@ public:
 public:
 	AGameBaseCharacter();
 
-	void BindInputAbility(const EInput& _eInput, const TSubclassOf<UGameplayAbilityBase>& _Ability);
+	void BindInputAbility(const EInput& _eInput, const FGameplayAbilitySpecHandle& _Handle);
 
 protected:
 	void BeginPlay() override;
