@@ -14,6 +14,5 @@ class PROJECTFD_API UAbilitySystemComponentBase : public UAbilitySystemComponent
 public:
 	UAbilitySystemComponentBase();
 
-	void InitAttribute(const FDataTableRowHandle& _DataHandle);
 	void NotifyToAbilities(const FString& _strEventName, USkeletalMeshComponent* _pMeshComp, UAnimSequenceBase* _pAnimation, const FAnimNotifyEventReference& _EventReference);
 };

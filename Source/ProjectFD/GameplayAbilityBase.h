@@ -11,21 +11,6 @@ class UAnimMontage;
 class UGameplayAbilityBase;
 class UParticleSystem;
 
-USTRUCT(BlueprintType)
-struct FAbilityInfo 
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, DisplayName = "Ability")
-	TSubclassOf<UGameplayAbilityBase> Ability;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, DisplayName = "Montages")
-	TArray<UAnimMontage*> Montages;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, DisplayName = "Particles")
-	TArray<UParticleSystem*> Particles;
-
-	UGameplayAbilityBase* CreateInstance(UObject* _pOuter) const;
-};
-
 UCLASS(BlueprintType, Abstract)
 class PROJECTFD_API UGameplayAbilityBase : public UGameplayAbility
 {
@@ -33,8 +18,6 @@ class PROJECTFD_API UGameplayAbilityBase : public UGameplayAbility
 
 public:
 	UGameplayAbilityBase();
-private:
-	virtual void Init(const FAbilityInfo& _info) {}
 
 protected:
 	virtual void OnNotify(const FString& _strEventName, USkeletalMeshComponent* _pMeshComp, UAnimSequenceBase* _pAnimation, const FAnimNotifyEventReference& _EventReference) {}

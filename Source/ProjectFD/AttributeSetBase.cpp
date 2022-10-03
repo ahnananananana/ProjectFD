@@ -26,7 +26,6 @@ void UAttributeSetBase::AdjustAttributeForMaxChange(FGameplayAttributeData& _Aff
 	const float CurrentMaxValue = _MaxAttribute.GetCurrentValue();
 	if (!FMath::IsNearlyEqual(CurrentMaxValue, _fNewMaxValue) && AbilityComp)
 	{
-		// Change current value to maintain the current Val / Max percent
 		const float CurrentValue = _AffectedAttribute.GetCurrentValue();
 		float NewDelta = (CurrentMaxValue > 0.f) ? (CurrentValue * _fNewMaxValue / CurrentMaxValue) - CurrentValue : _fNewMaxValue;
 

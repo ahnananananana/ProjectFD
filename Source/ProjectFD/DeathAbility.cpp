@@ -2,7 +2,6 @@
 
 
 #include "DeathAbility.h"
-#include "HealthComponent.h"
 #include "AbilitySystemComponent.h"
 #include "GameBaseCharacter.h"
 #include "Components/WidgetComponent.h"

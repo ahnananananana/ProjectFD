@@ -9,22 +9,10 @@ UAbilitySystemComponentBase::UAbilitySystemComponentBase()
 {
 }
 
-void UAbilitySystemComponentBase::InitAttribute(const FDataTableRowHandle& _DataHandle)
-{
-	for (UAttributeSet* pAttr : GetSpawnedAttributes_Mutable())
-	{
-		if (UAttributeSetBase* pAttrBase = Cast<UAttributeSetBase>(pAttr))
-		{
-			pAttrBase->Init(_DataHandle);
-		}
-		else
-		{
-			UE_LOG(LogScript, Warning, TEXT("Wrong AttributeSet!"));
-		}
-	}
-}
-
-void UAbilitySystemComponentBase::NotifyToAbilities(const FString& _strEventName, USkeletalMeshComponent* _pMeshComp, UAnimSequenceBase* _pAnimation, const FAnimNotifyEventReference& _EventReference)
+void UAbilitySystemComponentBase::NotifyToAbilities(
+	const FString& _strEventName, USkeletalMeshComponent* _pMeshComp, 
+	UAnimSequenceBase* _pAnimation, const FAnimNotifyEventReference& _EventReference
+	)
 {
 	for (const FGameplayAbilitySpec& spec : ActivatableAbilities.Items)
 	{

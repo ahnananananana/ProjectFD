@@ -3,7 +3,6 @@
 #include "Curves/CurveFloat.h"
 #include "HelperMacro.h"
 #include "AbilitySystemComponentBase.h"
-#include "HealthComponent.h"
 #include "PlayerCharacterAbility.h"
 #include "GameCharacterAttributeSet.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -37,7 +36,6 @@ void AGameBaseCharacter::BeginPlay()
 	// Init Gameplay Ability System
 	{
 		//TODO: Attribute 쪽에서 초기화하는 방법은 없나? 여기서 하는게 가독성이 더 좋은가?
-		//m_pAbilitySystemComp->InitAttribute(m_BaseData);
 		m_pAttributeSet->Init(m_BaseData);
 		
 		for (const FAbilityInitInfo& info : m_arrDefaultAbilities)

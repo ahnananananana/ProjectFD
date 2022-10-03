@@ -14,13 +14,11 @@ UGameCharacterAttributeSet::UGameCharacterAttributeSet()
 
 void UGameCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& _Attribute, float& _fNewValue)
 {
-	// This is called whenever attributes change, so for max health/mana we want to scale the current totals to match
 	Super::PreAttributeChange(_Attribute, _fNewValue);
 
 	OnAttributeValueChanged.Broadcast(_Attribute, _fNewValue);
 
-	// If a Max value changes, adjust current to keep Current % of Current to Max
-	if (_Attribute == GetMaxHealthAttribute()) // GetMaxHealthAttribute comes from the Macros defined at the top of the header
+	if (_Attribute == GetMaxHealthAttribute())
 	{
 		AdjustAttributeForMaxChange(Health, MaxHealth, _fNewValue, GetHealthAttribute());
 	}
@@ -47,7 +45,6 @@ void UGameCharacterAttributeSet::AdjustAttributeForMaxChange(FGameplayAttributeD
 	const float CurrentMaxValue = MaxAttribute.GetCurrentValue();
 	if (!FMath::IsNearlyEqual(CurrentMaxValue, NewMaxValue) && AbilityComp)
 	{
-		// Change current value to maintain the current Val / Max percent
 		const float CurrentValue = AffectedAttribute.GetCurrentValue();
 		float NewDelta = (CurrentMaxValue > 0.f) ? (CurrentValue * NewMaxValue / CurrentMaxValue) - CurrentValue : NewMaxValue;
 

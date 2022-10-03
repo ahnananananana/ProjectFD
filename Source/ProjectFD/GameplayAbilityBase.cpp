@@ -7,10 +7,3 @@ UGameplayAbilityBase::UGameplayAbilityBase()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }
-
-UGameplayAbilityBase* FAbilityInfo::CreateInstance(UObject* _pOuter) const
-{
-	UGameplayAbilityBase* pInstance = NewObject<UGameplayAbilityBase>(_pOuter, Ability);
-	pInstance->Init(*this);
-	return pInstance;
-}

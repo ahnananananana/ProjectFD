@@ -6,9 +6,6 @@
 #include "GameplayAbilityBase.h"
 #include "PlayerCharacterAbility.generated.h"
 
-/**
- * 
- */
 UCLASS(BlueprintType, Abstract)
 class PROJECTFD_API UPlayerCharacterAbility : public UGameplayAbilityBase
 {
