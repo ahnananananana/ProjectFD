@@ -30,7 +30,7 @@ void UMurdockBuckShot::OnMontageEnded(UAnimMontage* _pMontage, bool _bInterrupte
 {
 	if (_pMontage == m_pMontage)
 	{
-		EndAbility(GetCurrentAbilitySpecHandle(), CurrentActorInfo, CurrentActivationInfo, false, false);
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
 	}
 }
 
@@ -53,16 +53,11 @@ void UMurdockBuckShot::OnNotify(const FString& _strEventName, USkeletalMeshCompo
 	{
 		for (AActor* pTarget : result)
 		{
-			if (IGameplayTagAssetInterface* pTagInter = Cast<IGameplayTagAssetInterface>(pTarget))
+			if (IAbilitySystemInterface* pASInter = Cast<IAbilitySystemInterface>(pTarget))
 			{
-				//pTagInter->Has
-				if (IAbilitySystemInterface* pASInter = Cast<IAbilitySystemInterface>(pTarget))
-				{
-					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), m_pHitParticle, pTarget->GetActorTransform());
-
-					FGameplayEffectContextHandle context;
-					pASInter->GetAbilitySystemComponent()->ApplyGameplayEffectToSelf(m_pDamageEffect.GetDefaultObject(), 1, context);
-				}
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), m_pHitParticle, pTarget->GetActorTransform());
+				FGameplayEffectContextHandle context;
+				pASInter->GetAbilitySystemComponent()->ApplyGameplayEffectToSelf(m_pDamageEffect.GetDefaultObject(), 1, context);
 			}
 		}
 	}

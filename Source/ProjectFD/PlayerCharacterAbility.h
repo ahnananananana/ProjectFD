@@ -16,5 +16,5 @@ class PROJECTFD_API UPlayerCharacterAbility : public UGameplayAbilityBase
 
 public:
 	UFUNCTION(BlueprintCallable, Category = Ability)
-	float GetCooldownTime() const;
+	virtual float GetCooldownTime() const;
 };

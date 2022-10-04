@@ -5,7 +5,10 @@
 #include "AbilitySystemInterface.h"
 #include "AbilitySystemComponentBase.h"
 
-void UAbilitySystemNotify::Notify(USkeletalMeshComponent* _pMeshComp, UAnimSequenceBase* _pAnimation, const FAnimNotifyEventReference& _EventReference)
+void UAbilitySystemNotify::Notify(
+	USkeletalMeshComponent* _pMeshComp, UAnimSequenceBase* _pAnimation, 
+	const FAnimNotifyEventReference& _EventReference
+	)
 {
 	Super::Notify(_pMeshComp, _pAnimation, _EventReference);
 
