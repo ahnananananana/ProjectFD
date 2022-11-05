@@ -100,7 +100,8 @@ FVector AGameBaseCharacter::GetAimPoint() const
 void AGameBaseCharacter::ActivateAbility_Implementation(const EInput& _eType)
 {
 	UE_LOG(LogTemp, Log, TEXT("ActivateAbility_Implementation %d"), GetWorld()->IsServer());
-	m_pAbilitySystemComp->TryActivateAbility(m_arrBindedAbilities[(int)_eType]);
+	bool a = m_pAbilitySystemComp->TryActivateAbility(m_arrBindedAbilities[(int)_eType]);
+	UE_LOG(LogTemp, Log, TEXT("%d"), a);
 }
 
 void AGameBaseCharacter::Tick(float _fDeltaTime)
