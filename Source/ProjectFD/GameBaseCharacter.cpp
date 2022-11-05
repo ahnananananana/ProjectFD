@@ -7,6 +7,8 @@
 #include "GameCharacterAttributeSet.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
+#include "Engine/Engine.h"
 
 // Sets default values
 AGameBaseCharacter::AGameBaseCharacter()
@@ -19,11 +21,21 @@ AGameBaseCharacter::AGameBaseCharacter()
 	m_pAbilitySystemComp->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
 	m_pAttributeSet = CreateDefaultSubobject<UGameCharacterAttributeSet>("AttributeSet");
+
+	m_arrBindedAbilities.SetNum((int)EInput::count);
+}
+
+void AGameBaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AGameBaseCharacter, m_arrBindedAbilities);
 }
 
 void AGameBaseCharacter::BindInputAbility(const EInput& _eInput, const FGameplayAbilitySpecHandle& _Handle)
 {
-	m_mapInputAbility.Emplace(_eInput, _Handle);
+	//m_mapInputAbility.Emplace(_eInput, _Handle);
+	m_arrBindedAbilities[(int)_eInput] = _Handle;
 }
 
 // Called when the game starts or when spawned
@@ -31,24 +43,29 @@ void AGameBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	m_pCharacterData = m_BaseData.GetRow<FCharacterData>(TEXT(""));
-
-	// Init Gameplay Ability System
+	if (HasAuthority())
 	{
-		//TODO: Attribute 쪽에서 초기화하는 방법은 없나? 여기서 하는게 가독성이 더 좋은가?
-		m_pAttributeSet->Init(m_BaseData);
-		
-		for (const FAbilityInitInfo& info : m_arrDefaultAbilities)
+		m_pCharacterData = m_BaseData.GetRow<FCharacterData>(TEXT(""));
+
+		// Init Gameplay Ability System
 		{
-			FGameplayAbilitySpecHandle handle = m_pAbilitySystemComp->GiveAbility(FGameplayAbilitySpec(info.Ability));
-			
-			if (info.Input != EInput::NONE)
+			//TODO: Attribute 쪽에서 초기화하는 방법은 없나? 여기서 하는게 가독성이 더 좋은가?
+			m_pAttributeSet->Init(m_BaseData);
+
+			for (const FAbilityInitInfo& info : m_arrDefaultAbilities)
 			{
-				BindInputAbility(info.Input, handle);
+				FGameplayAbilitySpecHandle handle = m_pAbilitySystemComp->GiveAbility(FGameplayAbilitySpec(info.Ability));
+
+				if (info.Input != EInput::NONE)
+				{
+					BindInputAbility(info.Input, handle);
+				}
 			}
 		}
 	}
 }
+
+
 
 UAbilitySystemComponent* AGameBaseCharacter::GetAbilitySystemComponent() const
 {
@@ -80,7 +97,12 @@ FVector AGameBaseCharacter::GetAimPoint() const
 	}
 }
 
-// Called every frame
+void AGameBaseCharacter::ActivateAbility_Implementation(const EInput& _eType)
+{
+	UE_LOG(LogTemp, Log, TEXT("ActivateAbility_Implementation %d"), GetWorld()->IsServer());
+	m_pAbilitySystemComp->TryActivateAbility(m_arrBindedAbilities[(int)_eType]);
+}
+
 void AGameBaseCharacter::Tick(float _fDeltaTime)
 {
 	Super::Tick(_fDeltaTime);
@@ -96,7 +118,7 @@ void AGameBaseCharacter::Tick(float _fDeltaTime)
 			m_rLookRotation.Yaw -= 360;
 	}
 
-	if (APlayerController* pc = Cast<APlayerController>(GetController()))
+	/*if (APlayerController* pc = Cast<APlayerController>(GetController()))
 	{
 		if (m_mapInputAbility.Contains(EInput::PRIMARY_ACTION) && pc->WasInputKeyJustPressed(EKeys::LeftMouseButton))
 		{
@@ -128,7 +150,7 @@ void AGameBaseCharacter::Tick(float _fDeltaTime)
 			FGameplayEffectContextHandle h;
 			m_pAbilitySystemComp->ApplyGameplayEffectToSelf(m_testEffect.GetDefaultObject(), 1, h);
 		}
-	}	 
+	}	 */
 		
 	////LookRotation의 Yaw가 90이나 -90을 넘어가면 그 방향으로 회전
 	//{

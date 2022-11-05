@@ -16,6 +16,8 @@ void UShootProjectileAbility::ActivateAbility(const FGameplayAbilitySpecHandle _
 {
 	Super::ActivateAbility(_Handle, _pActorInfo, _ActivationInfo, _pTriggerEventData);
 
+	UE_LOG(LogTemp, Log, TEXT("ActivateAbility %d"), GetWorld()->IsServer());
+
 	AGameBaseCharacter* pOwner = Cast<AGameBaseCharacter>(GetOwningActorFromActorInfo());
 	pOwner->PlayAnimMontage(m_pShootMontage);
 

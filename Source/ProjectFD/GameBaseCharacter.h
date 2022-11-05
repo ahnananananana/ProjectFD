@@ -67,6 +67,8 @@ class PROJECTFD_API AGameBaseCharacter
 	TArray<FAbilityInitInfo> m_arrDefaultAbilities;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GameplayAbility", DisplayName = "Input Ability", meta = (AllowPrivateAccess = "true"))
 	TMap<EInput, FGameplayAbilitySpecHandle> m_mapInputAbility;
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "GameplayAbility", DisplayName = "Binded Ability", meta = (AllowPrivateAccess = "true"))
+	TArray<FGameplayAbilitySpecHandle> m_arrBindedAbilities;
 
 	FCharacterData* m_pCharacterData;
 
@@ -92,12 +94,15 @@ public:
 	AGameBaseCharacter();
 
 	void BindInputAbility(const EInput& _eInput, const FGameplayAbilitySpecHandle& _Handle);
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& _OutLifetimeProps) const override;
 
 protected:
 	void BeginPlay() override;
 
 public:
 	void Tick(float _fDeltaTime) override;
+	UFUNCTION(Client, Reliable)
+	void ActivateAbility(const EInput& _eType);
 
 private:
 	//void Turn(double _dAngle);

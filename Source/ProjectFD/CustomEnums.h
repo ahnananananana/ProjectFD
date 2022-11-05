@@ -8,14 +8,14 @@
 UENUM(BlueprintType)
 enum class EInput : uint8
 {
-	NONE UMETA(DisplayName = "None"),
+	NONE,
 	PRIMARY_ACTION UMETA(DisplayName = "Primary Action"),
 	SECONDARY_ACTION UMETA(DisplayName = "Secondary Action"),
 	SKILL1 UMETA(DisplayName = "Skill1"),
 	SKILL2 UMETA(DisplayName = "Skill2"),
 	ULTIMATE UMETA(DisplayName = "Ultimate"),
+	count,
 };
-
 
 UENUM(BlueprintType)
 enum class EAbilityInputID : uint8

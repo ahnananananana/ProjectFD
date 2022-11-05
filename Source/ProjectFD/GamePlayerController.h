@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "CustomEnums.h"
 #include "GamePlayerController.generated.h"
 
 class AGameBaseCharacter;
@@ -32,4 +33,7 @@ private:
 	void OnMoveRightInput(float _fValue);
 	void OnLookUpInput(float _fValue);
 	void OnLookRightInput(float _fValue);
+	void OnActivateAbility(const EInput _eType);
+
+	DECLARE_DELEGATE_OneParam(FActivateAbiltyDelegate, const EInput);
 };

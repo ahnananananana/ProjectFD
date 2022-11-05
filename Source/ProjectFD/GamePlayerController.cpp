@@ -26,17 +26,29 @@ void AGamePlayerController::BeginPlay()
 void AGamePlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-	
+
 	InputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AGamePlayerController::OnJumpInput);
 	InputComponent->BindAxis(TEXT("Move Forward"), this, &AGamePlayerController::OnMoveForwardInput);
 	InputComponent->BindAxis(TEXT("Move Right"), this, &AGamePlayerController::OnMoveRightInput);
 	InputComponent->BindAxis(TEXT("Look Up"), this, &AGamePlayerController::OnLookUpInput);
 	InputComponent->BindAxis(TEXT("Look Right"), this, &AGamePlayerController::OnLookRightInput);
+
+	InputComponent->BindAction<FActivateAbiltyDelegate>(TEXT("Primary Action"), IE_Pressed, this, &AGamePlayerController::OnActivateAbility, EInput::PRIMARY_ACTION);
+	InputComponent->BindAction<FActivateAbiltyDelegate>(TEXT("Secondary Action"), IE_Pressed, this, &AGamePlayerController::OnActivateAbility, EInput::SECONDARY_ACTION);
+	InputComponent->BindAction<FActivateAbiltyDelegate>(TEXT("Skill1"), IE_Pressed, this, &AGamePlayerController::OnActivateAbility, EInput::SKILL1);
+	InputComponent->BindAction<FActivateAbiltyDelegate>(TEXT("Skill2"), IE_Pressed, this, &AGamePlayerController::OnActivateAbility, EInput::SKILL2);
+	InputComponent->BindAction<FActivateAbiltyDelegate>(TEXT("Ultimate"), IE_Pressed, this, &AGamePlayerController::OnActivateAbility, EInput::ULTIMATE);
+}
+
+void AGamePlayerController::OnActivateAbility(const EInput _eType)
+{
+	UE_LOG(LogTemp, Log, TEXT("OnActivateAbility %d"), (int)_eType);
+	m_pPossessedCharacter->ActivateAbility(_eType);
 }
 
 void AGamePlayerController::OnJumpInput()
 {
-	if(!m_pPossessedCharacter)
+	if (!m_pPossessedCharacter)
 		return;
 
 	m_pPossessedCharacter->Jump();
