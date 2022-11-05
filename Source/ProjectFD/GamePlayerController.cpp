@@ -8,13 +8,19 @@
 void AGamePlayerController::OnPossess(APawn* _pPawn)
 {
 	Super::OnPossess(_pPawn);
-	m_pPossessedCharacter = Cast<AGameBaseCharacter>(_pPawn);
+	m_pPossessedCharacter = Cast<AGameBaseCharacter>(_pPawn);;
 }
 
 void AGamePlayerController::OnUnPossess()
 {
 	Super::OnUnPossess();
 	m_pPossessedCharacter = nullptr;
+}
+
+void AGamePlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	m_pPossessedCharacter = Cast<AGameBaseCharacter>(GetPawn());
 }
 
 void AGamePlayerController::SetupInputComponent()

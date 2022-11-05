@@ -24,6 +24,8 @@ protected:
 	void OnUnPossess() override;
 	void SetupInputComponent() override;
 
+	void BeginPlay() override;
+
 private:
 	void OnJumpInput();
 	void OnMoveForwardInput(float _fValue);
