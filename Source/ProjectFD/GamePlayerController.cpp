@@ -2,25 +2,24 @@
 
 
 #include "GamePlayerController.h"
-#include "GameBaseCharacter.h"
+#include "Character/ParagonCharacterBase.h"
 
-
-void AGamePlayerController::OnPossess(APawn* _pPawn)
+void AGamePlayerController::OnPossess(APawn* PawnToPossess)
 {
-	Super::OnPossess(_pPawn);
-	m_pPossessedCharacter = Cast<AGameBaseCharacter>(_pPawn);;
+	Super::OnPossess(PawnToPossess);
+	PossessedCharacter = Cast<AParagonCharacterBase>(PawnToPossess);;
 }
 
 void AGamePlayerController::OnUnPossess()
 {
 	Super::OnUnPossess();
-	m_pPossessedCharacter = nullptr;
+	PossessedCharacter = nullptr;
 }
 
 void AGamePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	m_pPossessedCharacter = Cast<AGameBaseCharacter>(GetPawn());
+	PossessedCharacter = Cast<AParagonCharacterBase>(GetPawn());
 }
 
 void AGamePlayerController::SetupInputComponent()
@@ -33,63 +32,72 @@ void AGamePlayerController::SetupInputComponent()
 	InputComponent->BindAxis(TEXT("Look Up"), this, &AGamePlayerController::OnLookUpInput);
 	InputComponent->BindAxis(TEXT("Look Right"), this, &AGamePlayerController::OnLookRightInput);
 
-	InputComponent->BindAction<FActivateAbiltyDelegate>(TEXT("Primary Action"), IE_Pressed, this, &AGamePlayerController::OnActivateAbility, EInput::PRIMARY_ACTION);
+	/*InputComponent->BindAction<FActivateAbiltyDelegate>(TEXT("Primary Action"), IE_Pressed, this, &AGamePlayerController::OnActivateAbility, EInput::PRIMARY_ACTION);
 	InputComponent->BindAction<FActivateAbiltyDelegate>(TEXT("Secondary Action"), IE_Pressed, this, &AGamePlayerController::OnActivateAbility, EInput::SECONDARY_ACTION);
 	InputComponent->BindAction<FActivateAbiltyDelegate>(TEXT("Skill1"), IE_Pressed, this, &AGamePlayerController::OnActivateAbility, EInput::SKILL1);
 	InputComponent->BindAction<FActivateAbiltyDelegate>(TEXT("Skill2"), IE_Pressed, this, &AGamePlayerController::OnActivateAbility, EInput::SKILL2);
-	InputComponent->BindAction<FActivateAbiltyDelegate>(TEXT("Ultimate"), IE_Pressed, this, &AGamePlayerController::OnActivateAbility, EInput::ULTIMATE);
+	InputComponent->BindAction<FActivateAbiltyDelegate>(TEXT("Ultimate"), IE_Pressed, this, &AGamePlayerController::OnActivateAbility, EInput::ULTIMATE);*/
 }
 
 void AGamePlayerController::OnActivateAbility(const EInput _eType)
 {
-	UE_LOG(LogTemp, Log, TEXT("OnActivateAbility %d"), (int)_eType);
-	m_pPossessedCharacter->ActivateAbility(_eType);
+	//PossessedCharacter->ActivateAbility(_eType);
 }
 
 void AGamePlayerController::OnJumpInput()
 {
-	if (!m_pPossessedCharacter)
+	if (!PossessedCharacter)
+	{
 		return;
+	}
 
-	m_pPossessedCharacter->Jump();
+	PossessedCharacter->Jump();
 }
 
-void AGamePlayerController::OnMoveForwardInput(float _fValue)
+void AGamePlayerController::OnMoveForwardInput(float Value)
 {
-	if (!m_pPossessedCharacter)
+	if (!PossessedCharacter)
+	{
 		return;
+	}
 
 	FVector vForward = PlayerCameraManager->GetActorForwardVector();
 	vForward.Z = 0;
 	vForward.Normalize();
 
-	m_pPossessedCharacter->AddMovementInput(vForward, _fValue);
+	PossessedCharacter->AddMovementInput(vForward, Value);
 }
 
-void AGamePlayerController::OnMoveRightInput(float _fValue)
+void AGamePlayerController::OnMoveRightInput(float Value)
 {
-	if (!m_pPossessedCharacter)
+	if (!PossessedCharacter)
+	{
 		return;
+	}
 
 	FVector vRight = PlayerCameraManager->GetActorRightVector();
 	vRight.Z = 0;
 	vRight.Normalize();
 
-	m_pPossessedCharacter->AddMovementInput(vRight, _fValue);
+	PossessedCharacter->AddMovementInput(vRight, Value);
 }
 
-void AGamePlayerController::OnLookUpInput(float _fValue)
+void AGamePlayerController::OnLookUpInput(float Value)
 {
-	if (!m_pPossessedCharacter)
+	if (!PossessedCharacter)
+	{
 		return;
+	}
 
-	AddPitchInput(_fValue);
+	AddPitchInput(Value);
 }
 
-void AGamePlayerController::OnLookRightInput(float _fValue)
+void AGamePlayerController::OnLookRightInput(float Value)
 {
-	if (!m_pPossessedCharacter)
+	if (!PossessedCharacter)
+	{
 		return;
+	}
 
-	AddYawInput(_fValue);
+	AddYawInput(Value);
 }

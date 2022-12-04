@@ -3,8 +3,8 @@
 
 #include "AbilitySystemComponentBase.h"
 #include "AttributeSetBase.h"
-#include "GameplayAbilityBase.h"
-
+//#include "GameplayAbilityBase.h"
+#include "GameplayAbilitySet.h"
 UAbilitySystemComponentBase::UAbilitySystemComponentBase()
 {
 }
@@ -14,7 +14,7 @@ void UAbilitySystemComponentBase::NotifyToAbilities(
 	UAnimSequenceBase* _pAnimation, const FAnimNotifyEventReference& _EventReference
 	)
 {
-	for (const FGameplayAbilitySpec& spec : ActivatableAbilities.Items)
+	/*for (const FGameplayAbilitySpec& spec : ActivatableAbilities.Items)
 	{
 		for (UGameplayAbility* pAbility : spec.GetAbilityInstances())
 		{
@@ -23,5 +23,5 @@ void UAbilitySystemComponentBase::NotifyToAbilities(
 				pAbilityBase->OnNotify(_strEventName, _pMeshComp, _pAnimation, _EventReference);
 			}
 		}
-	}
+	}*/
 }

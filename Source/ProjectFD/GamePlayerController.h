@@ -7,21 +7,20 @@
 #include "CustomEnums.h"
 #include "GamePlayerController.generated.h"
 
-class AGameBaseCharacter;
+class AParagonCharacterBase;
 
 UCLASS()
 class PROJECTFD_API AGamePlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
-	AGameBaseCharacter* m_pPossessedCharacter;
+	TObjectPtr<AParagonCharacterBase> PossessedCharacter;
 
 	float m_fLookUpSpeed = 1.f;
 	float m_fLookRightSpeed = 1.f;
 
-
 protected:
-	void OnPossess(APawn* _pPawn) override;
+	void OnPossess(APawn* PawnToPossess) override;
 	void OnUnPossess() override;
 	void SetupInputComponent() override;
 
@@ -29,10 +28,10 @@ protected:
 
 private:
 	void OnJumpInput();
-	void OnMoveForwardInput(float _fValue);
-	void OnMoveRightInput(float _fValue);
-	void OnLookUpInput(float _fValue);
-	void OnLookRightInput(float _fValue);
+	void OnMoveForwardInput(float Value);
+	void OnMoveRightInput(float Value);
+	void OnLookUpInput(float Value);
+	void OnLookRightInput(float Value);
 	void OnActivateAbility(const EInput _eType);
 
 	DECLARE_DELEGATE_OneParam(FActivateAbiltyDelegate, const EInput);

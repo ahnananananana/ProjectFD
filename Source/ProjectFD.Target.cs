@@ -10,5 +10,6 @@ public class ProjectFDTarget : TargetRules
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 		ExtraModuleNames.Add("ProjectFD");
+		WindowsPlatform.PCHMemoryAllocationFactor = 2000;
 	}
 }
