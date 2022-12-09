@@ -4,13 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
-#include "AbilitySystemComponent.h"
-#include "Engine/DataTable.h"
 #include "CustomMacros.h"
-#include "CustomStruct.h"
-#include "Net/UnrealNetwork.h"
+#include "AbilitySystemComponent.h"
 #include "AttributeSetBase.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAttributeChange, const FGameplayAttribute&, Attribute, float, OldValue, float, NewValue);
 
 UCLASS(Abstract, BlueprintType)
 class PROJECTFD_API UAttributeSetBase : public UAttributeSet
@@ -18,13 +16,12 @@ class PROJECTFD_API UAttributeSetBase : public UAttributeSet
 	GENERATED_BODY()
 
 public:
-	UAttributeSetBase();
+	UPROPERTY(BlueprintAssignable)
+	mutable FOnAttributeChange OnAttributeChange;
 
-	void Init(const FDataTableRowHandle& _DataHandle);
+public:
+	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
 
 protected:
-	virtual void OnInit(const FCharacterData& _Data) PURE_VIRTUAL(UAttributeSetBase::OnInit);
-
-protected:
-	void AdjustAttributeForMaxChange(FGameplayAttributeData& _AffectedAttribute, const FGameplayAttributeData& _MaxAttribute, float _fNewMaxValue, const FGameplayAttribute& _AffectedAttributeProperty);
+	void AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute, float NewMaxValue, const FGameplayAttribute& AffectedAttributeProperty);
 };

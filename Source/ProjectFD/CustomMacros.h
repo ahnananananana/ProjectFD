@@ -28,10 +28,10 @@
 #define ENSURE2(Condition, Return) \
 	if(!Condition)\
 	{\
+		UE_LOG(LogTemp, Log, TEXT("%s %d"), *FString(__FUNCTION__), __LINE__);\
 		FDebug::DumpStackTraceToLog(ELogVerbosity::Type::Error);\
 		GEngine->DeferredCommands.Add(TEXT("pause"));\
 		return Return;\
 	}
-
 #else
 #endif

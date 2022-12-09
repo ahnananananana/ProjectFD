@@ -12,11 +12,18 @@ float UParagonMovementComponent::GetMaxSpeed() const
 	if (MovementMode == MOVE_Walking || MovementMode == MOVE_NavWalking)
 	{
 		AParagonCharacterBase* Owner = Cast<AParagonCharacterBase>(GetCharacterOwner());
-		ENSURE(Owner, 0);
+		if (!Owner)
+		{
+			return Super::GetMaxSpeed();
+		}
+		//ENSURE(Owner, 0);
 
 		const UParagonCharacterAttributeSet* AttributeSet = Owner->GetAbilitySystemComponent()->GetSet<UParagonCharacterAttributeSet>();
-		ENSURE(AttributeSet, 0);
-
+		//ENSURE(AttributeSet, 0);
+		if (!AttributeSet)
+		{
+			return Super::GetMaxSpeed();
+		}
 		return AttributeSet->GetMoveSpeed();
 	}
 	else

@@ -18,6 +18,14 @@ enum class EInput : uint8
 };
 
 UENUM(BlueprintType)
+enum class ETeam : uint8
+{
+	None,
+	Red,
+	Blue,
+};
+
+UENUM(BlueprintType)
 enum class EAbilityInputID : uint8
 {
 	// 0 None

@@ -3,14 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AttributeSet.h"
-#include "AbilitySystemComponent.h"
-#include "Engine/DataTable.h"
-#include "../CustomMacros.h"
+#include "../AttributeSetBase.h"
 #include "ParagonCharacterAttributeSet.generated.h"
 
+
 UCLASS()
-class PROJECTFD_API UParagonCharacterAttributeSet : public UAttributeSet
+class PROJECTFD_API UParagonCharacterAttributeSet : public UAttributeSetBase
 {
 	GENERATED_BODY()
 
@@ -24,6 +22,8 @@ class PROJECTFD_API UParagonCharacterAttributeSet : public UAttributeSet
 	FGameplayAttributeData MaxMana;
 	UPROPERTY(BlueprintReadOnly, Category = "Attribute", ReplicatedUsing = OnRep_BasicAttackDamage, meta = (AllowPrivateAccess = "true"))
 	FGameplayAttributeData BasicAttackDamage;
+	UPROPERTY(BlueprintReadOnly, Category = "Attribute", ReplicatedUsing = OnRep_BasicAttackRange, meta = (AllowPrivateAccess = "true"))
+	FGameplayAttributeData BasicAttackRange;
 	UPROPERTY(BlueprintReadOnly, Category = "Attribute", ReplicatedUsing = OnRep_MoveSpeed, meta = (AllowPrivateAccess = "true"))
 	FGameplayAttributeData MoveSpeed;
 
@@ -33,6 +33,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UParagonCharacterAttributeSet, Mana);
 	ATTRIBUTE_ACCESSORS(UParagonCharacterAttributeSet, MaxMana);
 	ATTRIBUTE_ACCESSORS(UParagonCharacterAttributeSet, BasicAttackDamage);
+	ATTRIBUTE_ACCESSORS(UParagonCharacterAttributeSet, BasicAttackRange);
 	ATTRIBUTE_ACCESSORS(UParagonCharacterAttributeSet, MoveSpeed);
 
 protected:
@@ -47,15 +48,12 @@ protected:
 	UFUNCTION()
 	void OnRep_BasicAttackDamage(const FGameplayAttributeData& OldValue) { GAMEPLAYATTRIBUTE_REPNOTIFY(UParagonCharacterAttributeSet, BasicAttackDamage, OldValue); }
 	UFUNCTION()
+	void OnRep_BasicAttackRange(const FGameplayAttributeData& OldValue) { GAMEPLAYATTRIBUTE_REPNOTIFY(UParagonCharacterAttributeSet, BasicAttackRange, OldValue); }
+	UFUNCTION()
 	void OnRep_MoveSpeed(const FGameplayAttributeData& OldValue) { GAMEPLAYATTRIBUTE_REPNOTIFY(UParagonCharacterAttributeSet, MoveSpeed, OldValue); }
 
 public:
-	void Init(FDataTableRowHandle& Handle);
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
-
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-private:
-	void AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute, float NewMaxValue, const FGameplayAttribute& AffectedAttributeProperty);
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 };

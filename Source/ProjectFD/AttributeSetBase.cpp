@@ -2,34 +2,25 @@
 
 
 #include "AttributeSetBase.h"
+#include "AbilitySystemComponent.h"
 
-UAttributeSetBase::UAttributeSetBase()
-{
-}
-
-void UAttributeSetBase::Init(const FDataTableRowHandle& _DataHandle)
-{
-	FCharacterData* pData = _DataHandle.GetRow<FCharacterData>("");
-
-	if (!pData)
-	{
-		UE_LOG(LogScript, Error, TEXT("Wrong Data Handle %s"), *_DataHandle.RowName.ToString());
-		return;
-	}
-
-	OnInit(*pData);
-}
-
-void UAttributeSetBase::AdjustAttributeForMaxChange(FGameplayAttributeData& _AffectedAttribute, const FGameplayAttributeData& _MaxAttribute, float _fNewMaxValue, const FGameplayAttribute& _AffectedAttributeProperty)
+void UAttributeSetBase::AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute, float NewMaxValue, const FGameplayAttribute& AffectedAttributeProperty)
 {
 	UAbilitySystemComponent* AbilityComp = GetOwningAbilitySystemComponent();
-	const float CurrentMaxValue = _MaxAttribute.GetCurrentValue();
-	if (!FMath::IsNearlyEqual(CurrentMaxValue, _fNewMaxValue) && AbilityComp)
+	const float CurrentMaxValue = MaxAttribute.GetCurrentValue();
+	if (!FMath::IsNearlyEqual(CurrentMaxValue, NewMaxValue) && AbilityComp)
 	{
-		const float CurrentValue = _AffectedAttribute.GetCurrentValue();
-		float NewDelta = (CurrentMaxValue > 0.f) ? (CurrentValue * _fNewMaxValue / CurrentMaxValue) - CurrentValue : _fNewMaxValue;
+		const float CurrentValue = AffectedAttribute.GetCurrentValue();
+		float NewDelta = (CurrentMaxValue > 0.f) ? (CurrentValue * NewMaxValue / CurrentMaxValue) - CurrentValue : NewMaxValue;
 
-		AbilityComp->ApplyModToAttributeUnsafe(_AffectedAttributeProperty, EGameplayModOp::Additive, NewDelta);
+		AbilityComp->ApplyModToAttributeUnsafe(AffectedAttributeProperty, EGameplayModOp::Additive, NewDelta);
 	}
 }
 
+
+void UAttributeSetBase::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
+{
+	Super::PostAttributeChange(Attribute, OldValue, NewValue);
+
+	OnAttributeChange.Broadcast(Attribute, OldValue, NewValue);
+}
